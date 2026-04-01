@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WaterTracker - Modern Hydration App</title>
+    <meta
+      name="description"
+      content="WaterTracker helps you build a hydration habit with clean tracking, helpful reminders, and privacy-first sync."
+    />
+    <style>
+      :root {
+        --bg: #f5f8ff;
+        --bg-elevated: #ffffff;
+        --surface: #eef3ff;
+        --surface-strong: #dde8ff;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --border: rgba(15, 23, 42, 0.1);
+        --shadow: 0 12px 40px rgba(37, 99, 235, 0.08);
+        --brand: #2563eb;
+        --brand-2: #06b6d4;
+        --success: #16a34a;
+      }
+
+      [data-theme="dark"] {
+        --bg: #030712;
+        --bg-elevated: #0b1222;
+        --surface: #111a2f;
+        --surface-strong: #1a2742;
+        --text-primary: #e2e8f0;
+        --text-secondary: #94a3b8;
+        --border: rgba(148, 163, 184, 0.2);
+        --shadow: 0 16px 48px rgba(2, 6, 23, 0.7);
+        --brand: #60a5fa;
+        --brand-2: #22d3ee;
+        --success: #4ade80;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: radial-gradient(circle at 10% -20%, var(--surface-strong), var(--bg) 45%);
+        color: var(--text-primary);
+        scroll-behavior: smooth;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 14px;
+        z-index: 20;
+        margin-top: 14px;
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+        backdrop-filter: blur(10px);
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+      }
+
+      .logo {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-size: 0.95rem;
+        color: #fff;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .link,
+      .theme-toggle {
+        border: 1px solid var(--border);
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.82rem;
+      }
+
+      .theme-toggle {
+        cursor: pointer;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 28px;
+        align-items: center;
+        margin-top: 34px;
+      }
+
+      .hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+      }
+
+      .hero h1 .grad {
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--text-secondary);
+        line-height: 1.65;
+        max-width: 55ch;
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        box-shadow: 0 14px 36px color-mix(in srgb, var(--brand) 45%, transparent);
+      }
+
+      .btn-secondary {
+        color: var(--text-primary);
+        background: var(--bg-elevated);
+        border-color: var(--border);
+      }
+
+      .mock {
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: var(--bg-elevated);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .mock-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+        margin-bottom: 14px;
+      }
+
+      .ring {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        background: conic-gradient(var(--brand) 0 76%, var(--surface-strong) 76% 100%);
+        display: grid;
+        place-items: center;
+      }
+
+      .ring-core {
+        width: 142px;
+        height: 142px;
+        border-radius: 50%;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+
+      .ring-core strong {
+        font-size: 1.4rem;
+      }
+
+      .ring-core span {
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+      }
+
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .chip {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 9px;
+        font-size: 0.75rem;
+        background: var(--surface);
+      }
+
+      .sections {
+        margin-top: 36px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .section {
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        background: var(--bg-elevated);
+        box-shadow: var(--shadow);
+      }
+
+      .section h2 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+      }
+
+      .section p {
+        margin: 0;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      .feature-grid {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .feature {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        background: var(--surface);
+      }
+
+      .feature strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+
+      .feature span {
+        color: var(--text-secondary);
+        font-size: 0.82rem;
+      }
+
+      .privacy-card {
+        margin-top: 12px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+        padding: 14px;
+      }
+
+      .privacy-card p {
+        font-size: 0.84rem;
+      }
+
+      footer {
+        padding: 28px 0 34px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+
+      @media (max-width: 940px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .feature-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .container {
+          width: calc(100% - 24px);
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <div class="brand">
+          <div class="logo">W</div>
+          <span>WaterTracker</span>
+        </div>
+        <nav class="nav">
+          <a class="link" href="#features">Features</a>
+          <a class="link" href="#privacy">Privacy</a>
+          <a class="link" href="./privacy.html">Full Policy</a>
+          <button class="theme-toggle" id="themeToggle" type="button">Toggle theme</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div>
+          <h1>
+            Stay hydrated with a
+            <span class="grad">beautiful, focused tracker</span>
+          </h1>
+          <p>
+            WaterTracker makes hydration simple: quick one-tap logging, clear progress,
+            reminder controls, and sync powered by Firebase.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#download">Get the app</a>
+            <a class="btn btn-secondary" href="./privacy.html">Read privacy policy</a>
+          </div>
+        </div>
+
+        <div class="mock" aria-hidden="true">
+          <div class="mock-top">
+            <span>Today</span>
+            <span style="color: var(--success)">On track</span>
+          </div>
+          <div class="ring">
+            <div class="ring-core">
+              <div>
+                <strong>1850 ml</strong><br />
+                <span>Goal 2400 ml</span>
+              </div>
+            </div>
+          </div>
+          <div class="chips">
+            <div class="chip">+150 ml</div>
+            <div class="chip">+250 ml</div>
+            <div class="chip">+500 ml</div>
+            <div class="chip">Custom</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="sections">
+        <section class="section" id="features">
+          <h2>Why people like WaterTracker</h2>
+          <p>
+            Minimal UI, useful insights, and no clutter. Designed for daily use and
+            long-term consistency.
+          </p>
+          <div class="feature-grid">
+            <article class="feature">
+              <strong>Quick Add</strong>
+              <span>Log common amounts instantly with one tap.</span>
+            </article>
+            <article class="feature">
+              <strong>Insights</strong>
+              <span>Track patterns with weekly and monthly trends.</span>
+            </article>
+            <article class="feature">
+              <strong>Smart Nudges</strong>
+              <span>Friendly reminders with full control over frequency.</span>
+            </article>
+            <article class="feature">
+              <strong>Secure Sign-In</strong>
+              <span>Email/password and Google login via Firebase Auth.</span>
+            </article>
+            <article class="feature">
+              <strong>Sync Across Devices</strong>
+              <span>Your hydration data follows you when you switch phones.</span>
+            </article>
+            <article class="feature">
+              <strong>Privacy First</strong>
+              <span>No ad SDKs and no selling of personal data.</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="download">
+          <h2>Ready for release</h2>
+          <p>
+            This landing page is optimized for GitHub Pages and Play Store compliance
+            linking. Add your store URLs and contact details before launch.
+          </p>
+        </section>
+
+        <section class="section" id="privacy">
+          <h2>Privacy</h2>
+          <p>
+            Your full privacy policy is available on a dedicated page. Keep it updated
+            with your exact Data safety declarations in Play Console.
+          </p>
+          <div class="privacy-card">
+            <p>
+              WaterTracker uses Firebase to authenticate users and store hydration logs.
+              Users can manage reminders and request data deletion based on your support
+              process.
+            </p>
+            <a class="btn btn-secondary" href="./privacy.html">Open full policy</a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      WaterTracker - Modern hydration tracking app
+    </footer>
+
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var key = "watertracker-theme";
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var saved = localStorage.getItem(key);
+        var theme = saved || (prefersDark ? "dark" : "light");
+        root.setAttribute("data-theme", theme);
+
+        var btn = document.getElementById("themeToggle");
+        function updateLabel() {
+          var current = root.getAttribute("data-theme") || "light";
+          btn.textContent = current === "dark" ? "Switch to light" : "Switch to dark";
+        }
+        updateLabel();
+
+        btn.addEventListener("click", function () {
+          var current = root.getAttribute("data-theme") || "light";
+          var next = current === "dark" ? "light" : "dark";
+          root.setAttribute("data-theme", next);
+          localStorage.setItem(key, next);
+          updateLabel();
+        });
+      })();
+    </script>
+  </body>
+</html>
+
